@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 abstract class Employee {
     private String name;
@@ -18,7 +19,7 @@ abstract class Employee {
         return id;
     }
 
-       public abstract double calculateSalary();
+    public abstract double calculateSalary();
 
     @Override
     public String toString() {
@@ -77,12 +78,19 @@ class PayrollSystem {
         }
         if (employeeToRemove != null) {
             employeeList.remove(employeeToRemove);
+            System.out.println("Employee with ID " + id + " has been removed.");
+        } else {
+            System.out.println("Employee with ID " + id + " not found.");
         }
     }
 
     public void displayEmployees() {
-        for (Employee employee : employeeList) {
-            System.out.println(employee);
+        if (employeeList.isEmpty()) {
+            System.out.println("No employees to display.");
+        } else {
+            for (Employee employee : employeeList) {
+                System.out.println(employee);
+            }
         }
     }
 }
@@ -90,20 +98,59 @@ class PayrollSystem {
 public class Main {
     public static void main(String[] args) {
         PayrollSystem payrollSystem = new PayrollSystem();
+        Scanner scanner = new Scanner(System.in);
 
-        FullTimeEmployee emp1 = new FullTimeEmployee("Employee1", 101, 70000.0);
-        PartTimeEmployee emp2 = new PartTimeEmployee("Employee2", 102, 120, 200.0);
+        while (true) {
+            System.out.println("\nPayroll System Menu:");
+            System.out.println("1. Add Full-Time Employee");
+            System.out.println("2. Add Part-Time Employee");
+            System.out.println("3. Remove Employee");
+            System.out.println("4. Display All Employees");
+            System.out.println("5. Exit");
+            System.out.print("Enter your choice: ");
 
-        payrollSystem.addEmployee(emp1);
-        payrollSystem.addEmployee(emp2);
+            int choice = scanner.nextInt();
 
-        System.out.println("Initial Employee Details:");
-        payrollSystem.displayEmployees();
-
-        System.out.println("\nRemoving Employee...");
-        payrollSystem.removeEmployee(101);
-
-        System.out.println("\nRemaining Employee Details:");
-        payrollSystem.displayEmployees();
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter name: ");
+                    String fullName = scanner.next();
+                    System.out.print("Enter ID: ");
+                    int fullId = scanner.nextInt();
+                    System.out.print("Enter monthly salary: ");
+                    double salary = scanner.nextDouble();
+                    payrollSystem.addEmployee(new FullTimeEmployee(fullName, fullId, salary));
+                    System.out.println("Full-Time Employee added.");
+                    break;
+                case 2:
+                    System.out.print("Enter name: ");
+                    String partName = scanner.next();
+                    System.out.print("Enter ID: ");
+                    int partId = scanner.nextInt();
+                    System.out.print("Enter hours worked: ");
+                    int hours = scanner.nextInt();
+                    System.out.print("Enter hourly rate: ");
+                    double rate = scanner.nextDouble();
+                    payrollSystem.addEmployee(new PartTimeEmployee(partName, partId, hours, rate));
+                    System.out.println("Part-Time Employee added.");
+                    break;
+                case 3:
+                    System.out.print("Enter employee ID to remove: ");
+                    int removeId = scanner.nextInt();
+                    payrollSystem.removeEmployee(removeId);
+                    break;
+                case 4:
+                    System.out.println("\nEmployee Details:");
+                    payrollSystem.displayEmployees();
+                    break;
+                case 5:
+                    System.out.println("Exiting...");
+                    scanner.close();
+                    System.exit(0);
+                    break;
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+            }
+        }
     }
 }
